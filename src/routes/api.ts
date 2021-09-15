@@ -3,6 +3,8 @@ import { ping, time, database } from '../routes-controllers';
 
 const router = express.Router();
 
+router.post('/clients/', database.addNewClient);
+
 router.get('/clients/email/:email', database.getClientByEmail);
 router.get('/clients/id/:id', database.getClientById);
 router.get('/clients/all', database.getAllClients);

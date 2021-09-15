@@ -1,10 +1,21 @@
-import { Client } from 'pg';
+import { Pool, Client } from 'pg';
 import logging from './logging';
 
 const NAMESPACE = 'utils/database';
 
-type Conditions = {
-    [key: string]: string | number | boolean | null;
+export type JsonObject = {
+    [key: string]: string | number | boolean | [] | {} | null;
+};
+
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL
+});
+
+const query = async <T>(actions: Function): Promise<T | Error> => {
+    const client = await pool.connect();
+    const result = await actions(client);
+    await client.release();
+    return result;
 };
 
 const getSelectFieldsStr = (fields: string[]) => {
@@ -49,7 +60,7 @@ const getValuesStrOfObject = (obj: {}) => {
     return `(${valuesStr})`;
 };
 
-const selectExact = (client: Client, table: string, fields: Array<string>, conditions: Conditions = {}): Promise<any[] | Error> => {
+const selectExact = (client: Client, table: string, fields: Array<string>, conditions: JsonObject = {}): Promise<any[] | Error> => {
     return new Promise((resolve, reject) => {
         const conditionsStr = getObjectStrSeperated(conditions, false);
         const query = `SELECT ${getSelectFieldsStr(fields)} from ${table} ${conditionsStr ? `WHERE ${conditionsStr}` : ''};`;
@@ -61,7 +72,7 @@ const selectExact = (client: Client, table: string, fields: Array<string>, condi
     });
 };
 
-const selectAllExact = (client: Client, table: string, conditions: Conditions = {}): Promise<any[] | Error> => {
+const selectAllExact = (client: Client, table: string, conditions: JsonObject = {}): Promise<any[] | Error> => {
     return new Promise((resolve, reject) => {
         const conditionsStr = getObjectStrSeperated(conditions, false);
         const query = `SELECT * from ${table} ${conditionsStr ? `WHERE ${conditionsStr}` : ''};`;
@@ -73,40 +84,40 @@ const selectAllExact = (client: Client, table: string, conditions: Conditions = 
     });
 };
 
-const insertExact = (client: Client, table: string, object: Conditions): Promise<number | Error> => {
+const insertExact = (client: Client, table: string, object: JsonObject): Promise<any | Error> => {
     return new Promise((resolve, reject) => {
-        const query = `INSERT INTO ${table} ${getKeysStrOfObject(object)} VALUES ${getValuesStrOfObject(object)};`;
+        const query = `INSERT INTO ${table} ${getKeysStrOfObject(object)} VALUES ${getValuesStrOfObject(object)} RETURNING * ;`;
         logging.info(NAMESPACE, `query: ${query}`);
         client.query(query, (err, res) => {
             if (err) return reject(err);
-            else resolve(res.rowCount);
+            else resolve(res.rows[0]);
         });
     });
 };
 
-const deleteExact = (client: Client, table: string, conditions: Conditions): Promise<number | Error> => {
+const deleteExact = (client: Client, table: string, conditions: JsonObject): Promise<any[] | Error> => {
     return new Promise((resolve, reject) => {
         const conditionsStr = getObjectStrSeperated(conditions, false);
-        const query = `DELETE from ${table} ${conditionsStr ? `WHERE ${conditionsStr}` : ''};`;
+        const query = `DELETE from ${table} ${conditionsStr ? `WHERE ${conditionsStr}` : ''}  RETURNING * ;`;
         logging.info(NAMESPACE, `query: ${query}`);
         client.query(query, (err, res) => {
             if (err) return reject(err);
-            else resolve(res.rowCount);
+            else resolve(res.rows);
         });
     });
 };
 
-const updateExact = (client: Client, table: string, object: Conditions, conditions: Conditions): Promise<number | Error> => {
+const updateExact = (client: Client, table: string, object: JsonObject, conditions: JsonObject): Promise<any[] | Error> => {
     return new Promise((resolve, reject) => {
         const conditionsStr = getObjectStrSeperated(conditions, false);
         const setStr = getObjectStrSeperated(object, true);
-        const query = `UPDATE ${table} SET ${setStr} ${conditionsStr ? `WHERE ${conditionsStr}` : ''};`;
+        const query = `UPDATE ${table} SET ${setStr} ${conditionsStr ? `WHERE ${conditionsStr}` : ''}  RETURNING * ;`;
         logging.info(NAMESPACE, `query: ${query}`);
         client.query(query, (err, res) => {
             if (err) return reject(err);
-            else resolve(res.rowCount);
+            else resolve(res.rows);
         });
     });
 };
 
-export { selectExact, selectAllExact, insertExact, deleteExact, updateExact };
+export { query, selectExact, selectAllExact, insertExact, deleteExact, updateExact };

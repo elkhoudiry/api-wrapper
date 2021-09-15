@@ -1,46 +1,22 @@
 import { Client } from 'pg';
 import { LocalClient } from '../models/client';
-import { selectAllExact } from '../utils/database';
+import { query, insertExact, selectAllExact, JsonObject } from '../utils/database';
 
 const NAMESPACE = 'database/clients-repo';
 
-const getClient = () =>
-    new Client({
-        connectionString: process.env.DATABASE_URL,
-        ssl: false
-    });
-
 /** query all clients from clients table */
 const queryAllClients = async (): Promise<LocalClient[] | Error> => {
-    const client = getClient();
-    await client.connect();
-
-    const result = await selectAllExact(client, 'clients');
-
-    await client.end();
-    return result;
+    return await query<LocalClient[]>(async (client: Client) => await selectAllExact(client, 'clients'));
 };
 
 /** query client by id from clients table */
-const queryClientById = async (id: number): Promise<LocalClient[] | Error> => {
-    const client = getClient();
-    await client.connect();
-
-    const result = await selectAllExact(client, 'clients', { id });
-
-    await client.end();
-    return result;
+const queryClient = async (conditions: JsonObject): Promise<LocalClient[] | Error> => {
+    return await query<LocalClient[]>(async (client: Client) => await selectAllExact(client, 'clients', conditions));
 };
 
-/** query client by email from clients table */
-const queryClientByEmail = async (email: string): Promise<LocalClient[] | Error> => {
-    const client = getClient();
-    await client.connect();
-
-    const result = await selectAllExact(client, 'clients', { email });
-
-    await client.end();
-    return result;
+/** insert new client to database */
+const insertNewClient = async (localClient: LocalClient): Promise<LocalClient | Error> => {
+    return await query<LocalClient>(async (client: Client) => await insertExact(client, 'clients', localClient));
 };
 
-export { queryAllClients, queryClientById, queryClientByEmail };
+export { queryAllClients, queryClient, insertNewClient };
