@@ -32,4 +32,15 @@ const queryClientById = async (id: number): Promise<LocalClient[] | Error> => {
     return result;
 };
 
-export { queryAllClients, queryClientById };
+/** query client by email from clients table */
+const queryClientByEmail = async (email: string): Promise<LocalClient[] | Error> => {
+    const client = getClient();
+    await client.connect();
+
+    const result = await selectAllExact(client, 'clients', { email });
+
+    await client.end();
+    return result;
+};
+
+export { queryAllClients, queryClientById, queryClientByEmail };
