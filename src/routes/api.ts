@@ -1,8 +1,9 @@
 import express from 'express';
-import { ping, time } from '../routes-controllers';
+import { ping, time, database } from '../routes-controllers';
 
 const router = express.Router();
 
+router.get('/clients/all', database.getAllClients);
 router.get('/time/now', time.getTimeNow);
 router.get('/ping', ping.check);
 
