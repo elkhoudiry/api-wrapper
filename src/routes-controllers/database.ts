@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from 'express';
-import { queryAllClients } from '../database/clients-repo';
+import { queryAllClients, queryClientById } from '../database/clients-repo';
 import logging from '../utils/logging';
 
 const NAMESPACE = 'routes-controller/database';
 
-/** get all client endpoint */
+/** get all clients endpoint */
 const getAllClients = async (req: Request, res: Response, next: NextFunction) => {
     logging.info(NAMESPACE, 'request all clients called.');
 
@@ -21,4 +21,22 @@ const getAllClients = async (req: Request, res: Response, next: NextFunction) =>
     });
 };
 
-export default { getAllClients };
+/** get client by id endpoint */
+const getClientById = async (req: Request, res: Response, next: NextFunction) => {
+    const id = parseInt(req.params.id);
+    logging.info(NAMESPACE, `request cliend id: called.`, id);
+
+    const queryResults = await queryClientById(id);
+
+    if (queryResults instanceof Error) {
+        return res.status(500).json({
+            message: 'There is an error on our side!'
+        });
+    }
+
+    return res.status(200).json({
+        clients: queryResults
+    });
+};
+
+export default { getAllClients, getClientById };

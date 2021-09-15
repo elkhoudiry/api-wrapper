@@ -21,4 +21,15 @@ const queryAllClients = async (): Promise<LocalClient[] | Error> => {
     return result;
 };
 
-export { queryAllClients };
+/** query client by id from clients table */
+const queryClientById = async (id: number): Promise<LocalClient[] | Error> => {
+    const client = getClient();
+    await client.connect();
+
+    const result = await selectAllExact(client, 'clients', { id });
+
+    await client.end();
+    return result;
+};
+
+export { queryAllClients, queryClientById };
