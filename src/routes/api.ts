@@ -1,9 +1,10 @@
 import express from 'express';
-import { ping } from '../routes-controllers/ping';
+import { ping, time } from '../routes-controllers';
 
 const router = express.Router();
 
-router.get('/ping', ping);
+router.get('/time/now', time.getTimeNow);
+router.get('/ping', ping.check);
 
 router.get('/', (req, res, next) => res.status(404).json({ message: 'not found!' }));
 
