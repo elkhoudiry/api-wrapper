@@ -5,7 +5,7 @@ const NAMESPACE = 'utils/route';
 
 export type Check = {
     code: number;
-    valid: Function;
+    valid: () => boolean;
     message: string;
     [key: string]: {};
 };
@@ -46,13 +46,12 @@ const guard = (res: Response, guards: Check[]): Response | null => {
             return res.status(guard.code).json({ message: guard.message, payload: guard.payload });
         }
     }
-
     return null;
 };
 
-const guardResponse = (res: Response, checks: Check[], onPass: () => Response): Response => {
+const guardResponse = async (res: Response, checks: Check[], onPass: () => Promise<Response>): Promise<Response> => {
     const response = guard(res, checks);
-    return response ? response : onPass();
+    return response ? response : await onPass();
 };
 
 export { guardResponse, isFloatParam, isBoolParam, isIntParam, isValidParam };

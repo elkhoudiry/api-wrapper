@@ -1,11 +1,12 @@
+import { Response } from 'express';
 import { Pool, Client } from 'pg';
 import logging from './logging';
 
 const NAMESPACE = 'utils/database';
 
-export type JsonObject = {
+export interface JsonObject {
     [key: string]: string | number | boolean | [] | {} | null;
-};
+}
 
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL
@@ -120,4 +121,9 @@ const updateExact = (client: Client, table: string, object: JsonObject, conditio
     });
 };
 
-export { query, selectExact, selectAllExact, insertExact, deleteExact, updateExact };
+const response = <T>(res: Response, result: T | Error): Response => {
+    if (result instanceof Error) return res.status(500).json({ message: 'Internal Server Error!' });
+    else return res.status(200).json({ result: result });
+};
+
+export { query, response, selectExact, selectAllExact, insertExact, deleteExact, updateExact };
