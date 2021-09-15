@@ -1,5 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { queryAllClients, queryClient, insertNewClient } from '../database/clients-repo';
+import { queryAllClients, queryClient, insertClient, isBodyClientValid, isBodyClientExist } from '../database/clients-repo';
+import { response } from '../utils/database';
+import { Check, guardResponse, isIntParam, isValidParam } from '../utils/guard';
 import logging from '../utils/logging';
 
 const NAMESPACE = 'routes-controller/database';
@@ -8,77 +10,40 @@ const NAMESPACE = 'routes-controller/database';
 const getAllClients = async (req: Request, res: Response, next: NextFunction) => {
     logging.info(NAMESPACE, 'request all clients called.');
 
-    const queryResults = await queryAllClients();
+    const checks: Check[] = [];
+    const onPass = async () => response(res, await queryAllClients());
 
-    if (queryResults instanceof Error) {
-        return res.status(500).json({
-            message: 'There is an error on our side!'
-        });
-    }
-
-    return res.status(200).json({
-        clients: queryResults
-    });
+    return guardResponse(res, checks, onPass);
 };
 
 /** get client by id endpoint */
 const getClientById = async (req: Request, res: Response, next: NextFunction) => {
-    const id = parseInt(req.params.id);
-    logging.info(NAMESPACE, `request client id: ${id} called.`);
+    logging.info(NAMESPACE, `request client by id called.`, req.params);
 
-    if (!id) {
-        return res.status(400).json({
-            message: 'Bad Request! make sure the request is correct'
-        });
-    }
+    const checks: Check[] = [isIntParam('id', req.params.id)];
+    const onPass = async () => response(res, await queryClient({ id: req.params.id }));
 
-    const queryResults = await queryClient({ id });
-
-    if (queryResults instanceof Error) {
-        return res.status(500).json({
-            message: 'There is an error on our side!'
-        });
-    }
-
-    return res.status(200).json({
-        clients: queryResults
-    });
+    return guardResponse(res, checks, onPass);
 };
 
 /** get client by id endpoint */
 const getClientByEmail = async (req: Request, res: Response, next: NextFunction) => {
-    const email = req.params.email;
-    logging.info(NAMESPACE, `request client email: ${email}, called.`);
+    logging.info(NAMESPACE, `request client by email called.`, req.params);
 
-    const queryResults = await queryClient({ email });
+    const checks: Check[] = [isValidParam('email', req.params.email)];
+    const onPass = async () => response(res, await queryClient({ email: req.params.email }));
 
-    if (queryResults instanceof Error) {
-        return res.status(500).json({
-            message: 'There is an error on our side!'
-        });
-    }
-
-    return res.status(200).json({
-        clients: queryResults
-    });
+    return guardResponse(res, checks, onPass);
 };
 
 /** add new client to database table */
 const addNewClient = async (req: Request, res: Response, next: NextFunction) => {
-    logging.info(NAMESPACE, `add new client called.`);
+    logging.info(NAMESPACE, `add new client called.`, req.body);
 
-    const client = req.body.client;
-    const insertResult = await insertNewClient(client);
+    const checks: Check[] = [isBodyClientExist(req), isBodyClientValid(req)];
+    const onPass = async () => response(res, await insertClient(req.body.client));
 
-    if (insertResult instanceof Error) {
-        return res.status(500).json({
-            message: 'There is an error on our side!'
-        });
-    }
-
-    return res.status(200).json({
-        client: insertResult
-    });
+    return guardResponse(res, checks, onPass);
 };
 
 export default { getAllClients, getClientById, getClientByEmail, addNewClient };

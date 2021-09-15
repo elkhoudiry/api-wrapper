@@ -9,7 +9,7 @@ const check = (req: Request, res: Response, next: NextFunction) => {
     logging.info(NAMESPACE, `sample guard check route called.`, req.params);
 
     const checks: Check[] = [isIntParam('number', req.params.number), isValidParam('email', req.params.email), isBoolParam('verified', req.params.verified)];
-    const onPass = () => res.status(200).json({ message: 'pong' });
+    const onPass = async () => res.status(200).json({ message: 'pong' });
 
     return guardResponse(res, checks, onPass);
 };
