@@ -26,6 +26,12 @@ const getClientById = async (req: Request, res: Response, next: NextFunction) =>
     const id = parseInt(req.params.id);
     logging.info(NAMESPACE, `request client id: ${id} called.`);
 
+    if (!id) {
+        return res.status(400).json({
+            message: 'Bad Request! make sure the request is correct'
+        });
+    }
+
     const queryResults = await queryClientById(id);
 
     if (queryResults instanceof Error) {
