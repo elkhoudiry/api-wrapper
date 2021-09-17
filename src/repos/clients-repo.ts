@@ -22,7 +22,7 @@ const isBodyClientValid = (req: Request) => ({
 
 /** query all clients from clients table */
 const queryAllClients = async (): Promise<LocalClient[] | Error> => {
-    return await query<LocalClient[]>(async (client: Client) => await selectAllExact(client, 'clients'));
+    return await query<LocalClient[]>(async (client: Client) => await (await selectAllExact(client, 'clients')).rows);
 };
 
 /** query client by id from clients table */
