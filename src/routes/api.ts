@@ -1,14 +1,14 @@
 import express from 'express';
-import { ping, time, database, guard } from '../routes-controllers';
+import { ping, time, clients, guard } from '../routes-controllers';
 
 const router = express.Router();
 
-router.post('/clients/', database.addNewClient);
+router.post('/clients/', clients.addNewClient);
 
 router.get('/experimental/guard/*', guard.check);
-router.get('/clients/email/:email', database.getClientByEmail);
-router.get('/clients/id/:id', database.getClientById);
-router.get('/clients/all', database.getAllClients);
+router.get('/clients/email/:email', clients.getClientByEmail);
+router.get('/clients/id/:id', clients.getClientById);
+router.get('/clients/all', clients.getAllClients);
 router.get('/time/now', time.getTimeNow);
 router.get('/ping', ping.check);
 

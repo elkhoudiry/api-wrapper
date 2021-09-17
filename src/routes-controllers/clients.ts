@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { queryAllClients, queryClient, insertClient, isBodyClientValid, isBodyClientExist } from '../database/clients-repo';
+import { queryAllClients, queryClient, insertClient, isBodyClientValid, isBodyClientExist } from '../repos/clients-repo';
 import { response } from '../utils/database';
 import { Check, guardResponse, isIntParam, isValidParam } from '../utils/guard';
 import logging from '../utils/logging';
