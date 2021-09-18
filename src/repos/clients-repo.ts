@@ -1,7 +1,9 @@
 import { Request } from 'express';
-import { Client } from 'pg';
 import { LocalClient } from '../models/client';
-import { query, insertExact, selectAllExact, JsonObject } from '../utils/database';
+import { select } from '../sql/select';
+import { Where } from '../sql/where';
+import { query } from '../sql/database';
+import { insert } from '../sql/insert';
 
 const NAMESPACE = 'database/clients-repo';
 
@@ -22,17 +24,23 @@ const isBodyClientValid = (req: Request) => ({
 
 /** query all clients from clients table */
 const queryAllClients = async (): Promise<LocalClient[] | Error> => {
-    return await query<LocalClient[]>(async (client: Client) => await (await selectAllExact(client, 'clients')).rows);
+    const result = await query((client) => select(client, 'clients', ['*']));
+
+    return !(result instanceof Error) ? result.rows : result;
 };
 
-/** query client by id from clients table */
-const queryClient = async (conditions: JsonObject): Promise<LocalClient[] | Error> => {
-    return await query<LocalClient[]>(async (client: Client) => await selectAllExact(client, 'clients', conditions));
+/** query client where condition from clients table */
+const queryClient = async (where: Where): Promise<LocalClient[] | Error> => {
+    const result = await query((client) => select(client, 'clients', ['*'], { where }));
+
+    return !(result instanceof Error) ? result.rows : result;
 };
 
 /** insert new client to database */
 const insertClient = async (localClient: LocalClient): Promise<LocalClient | Error> => {
-    return await query<LocalClient>(async (client: Client) => await insertExact(client, 'clients', localClient));
+    const result = await query((client) => insert(client, 'clients', { values: [localClient] }));
+
+    return !(result instanceof Error) ? result.rows[0] : result;
 };
 
 export { queryAllClients, queryClient, insertClient, isBodyClientValid, isBodyClientExist };
