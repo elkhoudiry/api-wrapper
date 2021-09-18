@@ -1,9 +1,9 @@
 # online-api
 
-an api for different use cases
+api  wrapper for faster development
 
 for now it has
 
 -   get current time now
 -   basic sql database wrapping
--   some database queries
+-   some database queries examples
