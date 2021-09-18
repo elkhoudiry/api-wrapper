@@ -1,6 +1,6 @@
-import { JsonObject } from '../utils/database';
+import { SqlObject } from '../sql/database';
 
-export class LocalClient implements JsonObject {
+export class LocalClient implements SqlObject {
     readonly id: number;
     readonly email: string;
     readonly code: string;
@@ -14,7 +14,7 @@ export class LocalClient implements JsonObject {
         this.verified = verified;
     }
 
-    static checkType = (obj: JsonObject): boolean => {
+    static checkType = (obj: SqlObject): boolean => {
         if (!obj) return false;
         if (!obj.email || typeof obj.email !== 'string') return false;
         if (!obj.code || typeof obj.code !== 'string') return false;

@@ -1,4 +1,4 @@
-import { Pool, Client, QueryResult } from 'pg';
+import { Pool, Client, QueryResult, PoolClient } from 'pg';
 import logging from '../utils/logging';
 
 const NAMESPACE = 'sql/database';
@@ -7,13 +7,23 @@ export interface SqlObject {
     [key: string]: string | number | boolean | null;
 }
 
+export interface Query {
+    response: Promise<QueryResult | Error>;
+}
+
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL
 });
 
-const query = async <T>(actions: Function): Promise<T | Error> => {
+const query = async (query: (client: PoolClient) => Query): Promise<QueryResult | Error> => {
     const client = await pool.connect();
-    const result = await actions(client);
+    let result: QueryResult | Error;
+    try {
+        result = await query(client).response;
+    } catch (error: any) {
+        if (error instanceof Error) logging.error(NAMESPACE, error.message);
+        result = error;
+    }
     await client.release();
     return result;
 };
@@ -49,12 +59,4 @@ const getSqlColumnsValues = (obj: SqlObject, delimeter1: string, delimeter2: str
     return keys.reduce(check);
 };
 
-const getQueryResult = async (query: Promise<QueryResult>): Promise<QueryResult<any> | Error> => {
-    try {
-        return await query;
-    } catch (error: any) {
-        return error;
-    }
-};
-
-export { query, getValidSqlValue, getSqlColumns, getSqlValues, getSqlColumnsValues, getQueryResult };
+export { query, getValidSqlValue, getSqlColumns, getSqlValues, getSqlColumnsValues };
