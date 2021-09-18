@@ -6,7 +6,7 @@ import { Query } from './database';
 
 const NAMESPACE = 'sql/select';
 
-type SelectPostfix = {
+export type SelectPostfix = {
     where?: Where;
     orderBy?: OrderBy;
 };

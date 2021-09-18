@@ -4,7 +4,7 @@ import { getSqlColumns, getSqlValues, Query, SqlObject } from './database';
 
 const NAMESPACE = 'sql/insert';
 
-type InsertPostfix<T extends SqlObject> = {
+export type InsertPostfix<T extends SqlObject> = {
     values: T[];
 };
 
