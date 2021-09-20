@@ -15,6 +15,9 @@ router.get('/clients/all', clients.getAllClients);
 router.post('/experimental/tables/create/:name', tables.createTable);
 router.post('/experimental/tables/create-check/:name', tables.createTableIfNoExist);
 
+router.delete('/experimental/tables/drop/:name', tables.dropTable);
+router.delete('/experimental/tables/drop-check/:name', tables.dropTableIfExist);
+
 router.get('/experimental/guard/*', guard.check);
 
 router.get('/time/now', time.getTimeNow);
