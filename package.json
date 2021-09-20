@@ -8,9 +8,9 @@
     "license": "MIT",
     "private": true,
     "scripts": {
-        "dev": "nodemon src/server.ts",
-        "test": "jest",
-        "start": "node build/server.js"
+        "dev": "NODE_ENV=development nodemon src/server.ts",
+        "test": "NODE_ENV=test jest",
+        "start": "NODE_ENV=production node build/server.js"
     },
     "dependencies": {
         "cors": "^2.8.5",
