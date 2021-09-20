@@ -1,5 +1,7 @@
 import { Pool, QueryResult } from 'pg';
 import logging from '../../utils/logging';
+import { CreateTablePostfix, create_table, SqlColumn } from '../queries/create-table';
+import { drop_table, drop_table_exist } from '../queries/drop-table';
 
 const NAMESPACE = 'sql/databases/common';
 
@@ -14,6 +16,21 @@ export interface QueryExecuter<T> {
 export interface Query<T> {
     response: Promise<T | Error>;
 }
+
+// create general test table
+const createDummyTable = async <T>(executer: QueryExecuter<T>, run: () => void) => {
+    const id_column: SqlColumn = { name: 'id', type: 'INTEGER', notNull: true, primary: true, unique: false, autoGenerate: true };
+    const name_column: SqlColumn = { name: 'name', type: 'TEXT', notNull: true, primary: false, unique: false, autoGenerate: false };
+    const email_column: SqlColumn = { name: 'email', type: 'TEXT', notNull: true, primary: false, unique: true, autoGenerate: false };
+
+    const tablePostfix: CreateTablePostfix = { columns: [id_column, name_column, email_column] };
+
+    await create_table(executer, 'dummy_table', tablePostfix);
+
+    await run();
+
+    await drop_table_exist(executer, 'dummy_table', { cascade: false });
+};
 
 const getValidSqlValue = (value: any): string => {
     return typeof value === 'string' ? `\'${value}\'` : value.toString();
@@ -46,4 +63,4 @@ const getSqlColumnsValues = (obj: SqlObject, delimeter1: string, delimeter2: str
     return keys.reduce(check);
 };
 
-export { getValidSqlValue, getSqlColumns, getSqlValues, getSqlColumnsValues };
+export { createDummyTable, getValidSqlValue, getSqlColumns, getSqlValues, getSqlColumnsValues };
