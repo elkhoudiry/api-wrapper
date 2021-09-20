@@ -1,5 +1,5 @@
 import express from 'express';
-import { ping, time, clients, guard } from '../routes-controllers';
+import { ping, time, clients, guard, tables } from '../routes-controllers';
 
 const router = express.Router();
 
@@ -11,6 +11,9 @@ router.post('/clients/', clients.addNewClient);
 router.get('/clients/email/:email', clients.getClientByEmail);
 router.get('/clients/id/:id', clients.getClientById);
 router.get('/clients/all', clients.getAllClients);
+
+router.post('/experimental/tables/create/:name', tables.createTable);
+router.post('/experimental/tables/create-check/:name', tables.createTableIfNoExist);
 
 router.get('/experimental/guard/*', guard.check);
 
