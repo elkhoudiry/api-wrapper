@@ -1,9 +1,9 @@
 import { Request } from 'express';
 import { LocalClient } from '../models/client';
-import { select } from '../sql/select';
-import { Where } from '../sql/where';
+import { select, SelectPostfix } from '../sql/select';
 import { query } from '../sql/database';
 import { insert } from '../sql/insert';
+import { DeletePostfix, deleteQuery } from '../sql/delete';
 
 const NAMESPACE = 'database/clients-repo';
 
@@ -30,8 +30,8 @@ const queryAllClients = async (): Promise<LocalClient[] | Error> => {
 };
 
 /** query client where condition from clients table */
-const queryClient = async (where: Where): Promise<LocalClient[] | Error> => {
-    const result = await query((client) => select(client, 'clients', ['*'], { where }));
+const queryClient = async (postfix: SelectPostfix): Promise<LocalClient[] | Error> => {
+    const result = await query((client) => select(client, 'clients', ['*'], postfix));
 
     return !(result instanceof Error) ? result.rows : result;
 };
@@ -43,4 +43,11 @@ const insertClient = async (localClient: LocalClient): Promise<LocalClient | Err
     return !(result instanceof Error) ? result.rows[0] : result;
 };
 
-export { queryAllClients, queryClient, insertClient, isBodyClientValid, isBodyClientExist };
+/** insert new client to database */
+const deleteClient = async (postfix: DeletePostfix): Promise<LocalClient | Error> => {
+    const result = await query((client) => deleteQuery(client, 'clients', postfix));
+
+    return !(result instanceof Error) ? result.rows[0] : result;
+};
+
+export { queryAllClients, queryClient, insertClient, deleteClient, isBodyClientValid, isBodyClientExist };

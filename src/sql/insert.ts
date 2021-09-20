@@ -1,11 +1,10 @@
-import { Client, PoolClient } from 'pg';
+import { PoolClient } from 'pg';
 import logging from '../utils/logging';
-import { Where } from './where';
 import { getSqlColumns, getSqlValues, Query, SqlObject } from './database';
 
-const NAMESPACE = 'sql/select';
+const NAMESPACE = 'sql/insert';
 
-type InsertPostfix<T extends SqlObject> = {
+export type InsertPostfix<T extends SqlObject> = {
     values: T[];
 };
 

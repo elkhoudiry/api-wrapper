@@ -3,12 +3,14 @@ import logging from '../utils/logging';
 import { Where } from './where';
 import { OrderBy } from './order';
 import { Query } from './database';
+import { Limit } from './limit';
 
 const NAMESPACE = 'sql/select';
 
-type SelectPostfix = {
+export type SelectPostfix = {
     where?: Where;
     orderBy?: OrderBy;
+    limit?: Limit;
 };
 
 const selectQueryOptions = (postfix?: SelectPostfix) => {
@@ -18,6 +20,7 @@ const selectQueryOptions = (postfix?: SelectPostfix) => {
 
     if (postfix.where) options += ` ${postfix.where?.toString()}`;
     if (postfix.orderBy) options += ` ${postfix.orderBy.toString()}`;
+    if (postfix.limit) options += ` ${postfix.limit.toString()}`;
 
     return options;
 };
