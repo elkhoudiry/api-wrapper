@@ -9,6 +9,7 @@ export type SqlColumn = {
     type: 'TEXT' | 'INTEGER' | 'FLOAT' | 'BOOLEAN';
     notNull: boolean;
     primary: boolean;
+    unique: boolean;
     autoGenerate: boolean;
     default?: any;
 };
@@ -24,6 +25,7 @@ const joinColumn = (column: SqlColumn): string => {
     columnStr += `${column.type} `;
     !column.notNull ? columnStr : (columnStr += `NOT NULL `);
     !column.primary ? columnStr : (columnStr += `PRIMARY KEY `);
+    !column.unique ? columnStr : (columnStr += `UNIQUE `);
     !column.autoGenerate ? columnStr : (columnStr += `GENERATED ALWAYS AS IDENTITY `);
     !column.default ? columnStr : (columnStr += `DEFAULT ${getValidSqlValue(column.default)}`);
 
