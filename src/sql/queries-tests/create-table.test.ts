@@ -1,6 +1,6 @@
 import { QueryResult } from 'pg-mem';
 import { postgre_mem } from '../databases/postgre-mem';
-import { CreateTablePostfix, create_table, create_table_no_exist, create_table_query, SqlColumn } from '../queries/create-table';
+import { CreateTablePostfix, create_table_sql, create_table_sql_no_exist, create_table_sql_query, SqlColumn } from '../queries/create-table';
 
 // test create table query with only 1 column name & type
 test('query builder integrity: no properties', async () => {
@@ -8,7 +8,7 @@ test('query builder integrity: no properties', async () => {
     let test_column: SqlColumn = { name: 'id', type: 'INTEGER', notNull: false, primary: false, unique: false, autoGenerate: false };
     let postfix: CreateTablePostfix = { columns: [test_column] };
 
-    let result = create_table_query('test', postfix);
+    let result = create_table_sql_query('test', postfix);
     expect(result).toBe(test);
 });
 
@@ -18,7 +18,7 @@ test('query builder integrity: not null', async () => {
     let test_column: SqlColumn = { name: 'name', type: 'TEXT', notNull: true, primary: false, unique: false, autoGenerate: false };
     let postfix: CreateTablePostfix = { columns: [test_column] };
 
-    let result = create_table_query('test', postfix);
+    let result = create_table_sql_query('test', postfix);
 
     expect(result).toBe(test);
 });
@@ -29,7 +29,7 @@ test('query builder integrity: primary key', async () => {
     let test_column: SqlColumn = { name: 'name', type: 'TEXT', notNull: false, primary: true, unique: false, autoGenerate: false };
     let postfix: CreateTablePostfix = { columns: [test_column] };
 
-    let result = create_table_query('test', postfix);
+    let result = create_table_sql_query('test', postfix);
 
     expect(result).toBe(test);
 });
@@ -40,7 +40,7 @@ test('query builder integrity: unique', async () => {
     let test_column: SqlColumn = { name: 'name', type: 'TEXT', notNull: false, primary: false, unique: true, autoGenerate: false };
     let postfix: CreateTablePostfix = { columns: [test_column] };
 
-    let result = create_table_query('test', postfix);
+    let result = create_table_sql_query('test', postfix);
 
     expect(result).toBe(test);
 });
@@ -51,7 +51,7 @@ test('query builder integrity: auto generate as identity', async () => {
     let test_column: SqlColumn = { name: 'name', type: 'TEXT', notNull: false, primary: false, unique: false, autoGenerate: true };
     let postfix: CreateTablePostfix = { columns: [test_column] };
 
-    let result = create_table_query('test', postfix);
+    let result = create_table_sql_query('test', postfix);
 
     expect(result).toBe(test);
 });
@@ -62,7 +62,7 @@ test('query builder integrity: default value', async () => {
     let test_column: SqlColumn = { name: 'name', type: 'TEXT', notNull: false, primary: false, unique: false, autoGenerate: false, default: 'ahmed' };
     let postfix: CreateTablePostfix = { columns: [test_column] };
 
-    let result = create_table_query('test', postfix);
+    let result = create_table_sql_query('test', postfix);
 
     expect(result).toBe(test);
 });
@@ -71,7 +71,7 @@ test('query builder integrity: default value', async () => {
 test('create new table with no columns should fail', async () => {
     const postfix: CreateTablePostfix = { columns: [] };
 
-    const result = (await create_table(postgre_mem, 'test', postfix)) as QueryResult;
+    const result = (await create_table_sql(postgre_mem, 'test', postfix)) as QueryResult;
 
     expect(result).toBeInstanceOf(Error);
 });
@@ -81,7 +81,7 @@ test('create new table with 1 column at least should success', async () => {
     const id_column: SqlColumn = { name: 'id', type: 'INTEGER', notNull: false, primary: true, unique: false, autoGenerate: true };
     const postfix: CreateTablePostfix = { columns: [id_column] };
 
-    const result = (await create_table(postgre_mem, 'test', postfix)) as QueryResult;
+    const result = (await create_table_sql(postgre_mem, 'test', postfix)) as QueryResult;
 
     expect(result.command).toBe('CREATE');
 });
@@ -91,7 +91,7 @@ test('create table if already exists should success', async () => {
     const id_column: SqlColumn = { name: 'id', type: 'INTEGER', notNull: false, primary: true, unique: false, autoGenerate: true };
     const postfix: CreateTablePostfix = { columns: [id_column] };
 
-    const result = (await create_table_no_exist(postgre_mem, 'test', postfix)) as QueryResult;
+    const result = (await create_table_sql_no_exist(postgre_mem, 'test', postfix)) as QueryResult;
 
     expect(result.command).toBe('CREATE');
 });

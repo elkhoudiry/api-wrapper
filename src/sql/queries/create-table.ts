@@ -36,19 +36,19 @@ const createTableQueryBuilder = (postfix: CreateTablePostfix): string => {
     return postfix.columns.map(joinColumn).join();
 };
 
-const create_table_query = (table: string, postfix: CreateTablePostfix): string => {
+const create_table_sql_query = (table: string, postfix: CreateTablePostfix): string => {
     const options = createTableQueryBuilder(postfix);
 
     return `CREATE TABLE ${table} (${options});`;
 };
 
-const create_table_no_exist = <T>(executer: QueryExecuter<T>, table: string, postfix: CreateTablePostfix): Promise<T | Error> => {
-    return create_table(executer, `IF NOT EXISTS ${table}`, postfix);
+const create_table_sql_no_exist = <T>(executer: QueryExecuter<T>, table: string, postfix: CreateTablePostfix): Promise<T | Error> => {
+    return create_table_sql(executer, `IF NOT EXISTS ${table}`, postfix);
 };
 
-const create_table = async <T>(executer: QueryExecuter<T>, table: string, postfix: CreateTablePostfix): Promise<T | Error> => {
+const create_table_sql = async <T>(executer: QueryExecuter<T>, table: string, postfix: CreateTablePostfix): Promise<T | Error> => {
     try {
-        const query = create_table_query(table, postfix);
+        const query = create_table_sql_query(table, postfix);
 
         logging.info(NAMESPACE, `query: ${query}`);
 
@@ -58,4 +58,4 @@ const create_table = async <T>(executer: QueryExecuter<T>, table: string, postfi
     }
 };
 
-export { create_table, create_table_query, create_table_no_exist };
+export { create_table_sql, create_table_sql_query, create_table_sql_no_exist };
