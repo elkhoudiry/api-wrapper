@@ -1,5 +1,5 @@
-import { CreateTablePostfix, create_table, SqlColumn } from '../queries/create-table';
-import { drop_table_exist } from '../queries/drop-table';
+import { CreateTablePostfix, create_table_sql, SqlColumn } from '../queries/create-table';
+import { drop_table_sql_exist } from '../queries/drop-table';
 import { QueryExecuter, SqlObject } from './common';
 
 // create general test table
@@ -10,11 +10,11 @@ const createDummyTable = async <T>(executer: QueryExecuter<T>, run: () => void) 
 
     const tablePostfix: CreateTablePostfix = { columns: [id_column, name_column, email_column] };
 
-    await create_table(executer, 'dummy_table', tablePostfix);
+    await create_table_sql(executer, 'dummy_table', tablePostfix);
 
     await run();
 
-    await drop_table_exist(executer, 'dummy_table', { cascade: false });
+    await drop_table_sql_exist(executer, 'dummy_table', { cascade: false });
 };
 
 const createTenDummyInserts = (): SqlObject[] => {
