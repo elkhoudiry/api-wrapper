@@ -4,7 +4,7 @@ import { postgre_mem } from '../databases/postgre-mem';
 import { Limit } from '../options/limit';
 import { OrderBy } from '../options/order';
 import { Where } from '../options/where';
-import { insert, InsertPostfix } from '../queries/insert';
+import { insert_sql, InsertPostfix } from '../queries/insert';
 
 import { select_sql, SelectPostfix, select_sql_query } from '../queries/select';
 
@@ -34,7 +34,7 @@ test('select query should success', async () => {
         const values = createTenDummyInserts();
         const test = values.map((obj, index) => (obj = { ...obj, id: index + 1 }));
         const insertPostfix: InsertPostfix<SqlObject> = { values };
-        await insert(postgre_mem, 'dummy_table', insertPostfix);
+        await insert_sql(postgre_mem, 'dummy_table', insertPostfix);
 
         const result = await select_sql(postgre_mem, 'dummy_table', ['*']);
 
@@ -51,7 +51,7 @@ test('select only 1 column should success', async () => {
         const values = createTenDummyInserts();
         const test = values.map((obj, index) => (obj = { email: obj.email }));
         const insertPostfix: InsertPostfix<SqlObject> = { values };
-        await insert(postgre_mem, 'dummy_table', insertPostfix);
+        await insert_sql(postgre_mem, 'dummy_table', insertPostfix);
 
         const result = await select_sql(postgre_mem, 'dummy_table', ['email']);
 
@@ -69,7 +69,7 @@ test('select select latest entery should success', async () => {
         const test = [{ ...values[values.length - 1], id: 10 }];
         const insertPostfix: InsertPostfix<SqlObject> = { values };
         const selectPostfix: SelectPostfix = { orderBy: OrderBy.build('id').desc(), limit: Limit.build().count(1) };
-        await insert(postgre_mem, 'dummy_table', insertPostfix);
+        await insert_sql(postgre_mem, 'dummy_table', insertPostfix);
 
         const result = await select_sql(postgre_mem, 'dummy_table', ['*'], selectPostfix);
 
