@@ -13,16 +13,16 @@ const insertQueryBuilder = <T extends SqlObject>(postfix: InsertPostfix<T>): str
     return postfix.values.map((value) => `(${getSqlValues(value)})`).join();
 };
 
-const insert_query = <T extends SqlObject>(table: string, postfix: InsertPostfix<T>): string => {
+const insert_sql_query = <T extends SqlObject>(table: string, postfix: InsertPostfix<T>): string => {
     const values = insertQueryBuilder(postfix);
     const columns = getSqlColumns(postfix.values[0]);
 
     return `INSERT INTO ${table} (${columns}) VALUES ${values} RETURNING *;`;
 };
 
-const insert = async <T extends SqlObject, V>(executer: QueryExecuter<V>, table: string, postfix: InsertPostfix<T>): Promise<V | Error> => {
+const insert_sql = async <T extends SqlObject, V>(executer: QueryExecuter<V>, table: string, postfix: InsertPostfix<T>): Promise<V | Error> => {
     try {
-        const query = insert_query(table, postfix);
+        const query = insert_sql_query(table, postfix);
 
         logging.info(NAMESPACE, `query: ${query}`);
 
@@ -32,4 +32,4 @@ const insert = async <T extends SqlObject, V>(executer: QueryExecuter<V>, table:
     }
 };
 
-export { insert, insert_query };
+export { insert_sql, insert_sql_query };
