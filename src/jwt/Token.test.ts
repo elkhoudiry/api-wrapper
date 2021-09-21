@@ -1,6 +1,6 @@
-import { JWT_EXPIRED_ERROR, JWT_MODIFIED_ERROR } from '../errors/errors';
-import { sign, verify } from './token';
-import { EXPIRED_TOKEN_TIME, TEST_ACCESS_TOKEN_TIME } from './token-time';
+import { JWT_EXPIRED_ERROR, JWT_MODIFIED_ERROR } from '../errors/Errors';
+import { sign, verify } from './Token';
+import { EXPIRED_TOKEN_TIME, TEST_ACCESS_TOKEN_TIME } from './Times';
 
 // test signing & verifying token
 test('signing token & verifying it, returns no error', async () => {
