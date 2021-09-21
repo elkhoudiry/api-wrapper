@@ -2,7 +2,20 @@ import { QueryResult } from 'pg-mem';
 import { SqlObject } from '../../sql/database';
 import { createDummyTable } from '../databases/dummy';
 import { postgre_mem } from '../databases/postgre-mem';
-import { insert, InsertPostfix } from '../queries/insert';
+import { insert, InsertPostfix, insert_query } from '../queries/insert';
+
+// test inserting query integrity
+test('test insert query is built correctly', async () => {
+    const test = "INSERT INTO dummy_table (id,name,email) VALUES (3,'name','test@test'),(4,'name','email@test') RETURNING *;";
+    const result = insert_query('dummy_table', {
+        values: [
+            { id: 3, name: 'name', email: 'test@test' },
+            { id: 4, name: 'name', email: 'email@test' }
+        ]
+    });
+
+    expect(result).toStrictEqual(test);
+});
 
 // test inserting value in table
 test('inserting value in table should success', async () => {
