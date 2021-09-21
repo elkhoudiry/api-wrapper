@@ -6,12 +6,12 @@ import { OrderBy } from '../options/order';
 import { Where } from '../options/where';
 import { insert, InsertPostfix } from '../queries/insert';
 
-import { select, SelectPostfix, select_query } from '../queries/select';
+import { select_sql, SelectPostfix, select_sql_query } from '../queries/select';
 
 // test select query integrity
 test('test select query with no postfix', () => {
     const test = 'SELECT email, name FROM dummy_table;';
-    const result = select_query('dummy_table', ['email, name']);
+    const result = select_sql_query('dummy_table', ['email, name']);
 
     expect(result).toStrictEqual(test);
 });
@@ -23,7 +23,7 @@ test('test select query with all options', () => {
     postfix.where = Where.build('id').equal(0).and('email').greater('email@test');
     postfix.orderBy = OrderBy.build('email').desc().order('id').asc();
     postfix.limit = Limit.build().count(5);
-    const result = select_query('dummy_table', ['email, name'], postfix);
+    const result = select_sql_query('dummy_table', ['email, name'], postfix);
 
     expect(result).toStrictEqual(test);
 });
@@ -36,7 +36,7 @@ test('select query should success', async () => {
         const insertPostfix: InsertPostfix<SqlObject> = { values };
         await insert(postgre_mem, 'dummy_table', insertPostfix);
 
-        const result = await select(postgre_mem, 'dummy_table', ['*']);
+        const result = await select_sql(postgre_mem, 'dummy_table', ['*']);
 
         if (result instanceof Error) fail('select should success not fail');
 
@@ -53,7 +53,7 @@ test('select only 1 column should success', async () => {
         const insertPostfix: InsertPostfix<SqlObject> = { values };
         await insert(postgre_mem, 'dummy_table', insertPostfix);
 
-        const result = await select(postgre_mem, 'dummy_table', ['email']);
+        const result = await select_sql(postgre_mem, 'dummy_table', ['email']);
 
         if (result instanceof Error) fail('select should success not fail');
 
@@ -71,7 +71,7 @@ test('select select latest entery should success', async () => {
         const selectPostfix: SelectPostfix = { orderBy: OrderBy.build('id').desc(), limit: Limit.build().count(1) };
         await insert(postgre_mem, 'dummy_table', insertPostfix);
 
-        const result = await select(postgre_mem, 'dummy_table', ['*'], selectPostfix);
+        const result = await select_sql(postgre_mem, 'dummy_table', ['*'], selectPostfix);
 
         if (result instanceof Error) fail('select should success not fail');
 

@@ -25,15 +25,15 @@ const selectQueryOptions = (postfix?: SelectPostfix) => {
     return options;
 };
 
-const select_query = <T>(table: string, columns: Array<string>, postfix?: SelectPostfix) => {
+const select_sql_query = <T>(table: string, columns: Array<string>, postfix?: SelectPostfix) => {
     const options = selectQueryOptions(postfix);
 
     return `SELECT ${columns.join()} FROM ${table}${options};`;
 };
 
-const select = async <T>(executer: QueryExecuter<T>, table: string, columns: Array<string>, postfix?: SelectPostfix): Promise<T | Error> => {
+const select_sql = async <T>(executer: QueryExecuter<T>, table: string, columns: Array<string>, postfix?: SelectPostfix): Promise<T | Error> => {
     try {
-        const query = select_query(table, columns, postfix);
+        const query = select_sql_query(table, columns, postfix);
 
         logging.info(NAMESPACE, `query: ${query}`);
 
@@ -43,4 +43,4 @@ const select = async <T>(executer: QueryExecuter<T>, table: string, columns: Arr
     }
 };
 
-export { select, select_query };
+export { select_sql, select_sql_query };
