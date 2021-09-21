@@ -13,10 +13,6 @@ export interface QueryExecuter<T> {
     execute: (query: string) => Promise<T | Error>;
 }
 
-export interface Query<T> {
-    response: Promise<T | Error>;
-}
-
 // create general test table
 const createDummyTable = async <T>(executer: QueryExecuter<T>, run: () => void) => {
     const id_column: SqlColumn = { name: 'id', type: 'INTEGER', notNull: true, primary: true, unique: false, autoGenerate: true };

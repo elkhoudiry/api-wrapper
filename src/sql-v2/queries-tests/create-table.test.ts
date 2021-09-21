@@ -71,7 +71,7 @@ test('query builder integrity: default value', async () => {
 test('create new table with no columns should fail', async () => {
     const postfix: CreateTablePostfix = { columns: [] };
 
-    const result = (await create_table(postgre_mem, 'test', postfix).response) as QueryResult;
+    const result = (await create_table(postgre_mem, 'test', postfix)) as QueryResult;
 
     expect(result).toBeInstanceOf(Error);
 });
@@ -81,7 +81,7 @@ test('create new table with 1 column at least should success', async () => {
     const id_column: SqlColumn = { name: 'id', type: 'INTEGER', notNull: false, primary: true, unique: false, autoGenerate: true };
     const postfix: CreateTablePostfix = { columns: [id_column] };
 
-    const result = (await create_table(postgre_mem, 'test', postfix).response) as QueryResult;
+    const result = (await create_table(postgre_mem, 'test', postfix)) as QueryResult;
 
     expect(result.command).toBe('CREATE');
 });
@@ -91,7 +91,7 @@ test('create table if already exists should success', async () => {
     const id_column: SqlColumn = { name: 'id', type: 'INTEGER', notNull: false, primary: true, unique: false, autoGenerate: true };
     const postfix: CreateTablePostfix = { columns: [id_column] };
 
-    const result = (await create_table_no_exist(postgre_mem, 'test', postfix).response) as QueryResult;
+    const result = (await create_table_no_exist(postgre_mem, 'test', postfix)) as QueryResult;
 
     expect(result.command).toBe('CREATE');
 });

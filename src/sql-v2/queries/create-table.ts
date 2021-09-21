@@ -1,4 +1,4 @@
-import { getValidSqlValue, Query, QueryExecuter } from '../databases/common';
+import { getValidSqlValue, QueryExecuter } from '../databases/common';
 
 import logging from '../../utils/logging';
 
@@ -42,16 +42,20 @@ const create_table_query = (table: string, postfix: CreateTablePostfix): string 
     return `CREATE TABLE ${table} (${options});`;
 };
 
-const create_table_no_exist = <T>(executer: QueryExecuter<T>, table: string, postfix: CreateTablePostfix): Query<T> => {
+const create_table_no_exist = <T>(executer: QueryExecuter<T>, table: string, postfix: CreateTablePostfix): Promise<T | Error> => {
     return create_table(executer, `IF NOT EXISTS ${table}`, postfix);
 };
 
-const create_table = <T>(executer: QueryExecuter<T>, table: string, postfix: CreateTablePostfix): Query<T> => {
-    const query = create_table_query(table, postfix);
+const create_table = async <T>(executer: QueryExecuter<T>, table: string, postfix: CreateTablePostfix): Promise<T | Error> => {
+    try {
+        const query = create_table_query(table, postfix);
 
-    logging.info(NAMESPACE, `query: ${query}`);
+        logging.info(NAMESPACE, `query: ${query}`);
 
-    return { response: executer.execute(query) };
+        return await executer.execute(query);
+    } catch (error: any) {
+        return Error(error);
+    }
 };
 
 export { create_table, create_table_query, create_table_no_exist };

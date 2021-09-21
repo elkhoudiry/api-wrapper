@@ -25,7 +25,7 @@ test('drop table integrity: no properties', () => {
 test('drop exisiting table should success', () => {
     createDummyTable(postgre_mem, async () => {
         const postfix: DropTablePostfix = { cascade: false };
-        const result = (await drop_table(postgre_mem, 'dummy_table', postfix).response) as QueryResult;
+        const result = (await drop_table(postgre_mem, 'dummy_table', postfix)) as QueryResult;
 
         expect(result.command).toBe('DROP');
     });
@@ -34,7 +34,7 @@ test('drop exisiting table should success', () => {
 // drop non existing table should fail
 test('drop non exisiting table should fail', async () => {
     const postfix: DropTablePostfix = { cascade: false };
-    const result = (await drop_table(postgre_mem, 'dummy_table', postfix).response) as QueryResult;
+    const result = (await drop_table(postgre_mem, 'dummy_table', postfix)) as QueryResult;
 
     expect(result instanceof Error).toBe(true);
 });
@@ -43,7 +43,7 @@ test('drop non exisiting table should fail', async () => {
 test('drop table if exists should success', () => {
     createDummyTable(postgre_mem, async () => {
         const postfix: DropTablePostfix = { cascade: false };
-        const result = (await drop_table_exist(postgre_mem, 'dummy_table', postfix).response) as QueryResult;
+        const result = (await drop_table_exist(postgre_mem, 'dummy_table', postfix)) as QueryResult;
 
         expect(result.command).toBe('DROP');
     });
