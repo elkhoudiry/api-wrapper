@@ -1,13 +1,13 @@
 import { Request, Response, NextFunction } from 'express';
 import { queryAllClients, queryClient, insertClient, deleteClient, isBodyClientValid, isBodyClientExist } from '../repos/clients-repo';
-import { Where } from '../sql/where';
 import { response } from '../routes/response';
+import { Limit } from '../sql/options/limit';
+import { OrderBy } from '../sql/options/order';
+import { Where } from '../sql/options/where';
+import { DeletePostfix } from '../sql/queries/delete';
+import { SelectPostfix } from '../sql/queries/select';
 import { Check, guardResponse, isIntParam, isValidParam } from '../utils/guard';
 import logging from '../utils/logging';
-import { SelectPostfix } from '../sql/select';
-import { OrderBy } from '../sql/order';
-import { Limit } from '../sql/limit';
-import { DeletePostfix } from '../sql/delete';
 
 const NAMESPACE = 'routes-controller/database';
 
@@ -37,7 +37,7 @@ const getClientByEmail = async (req: Request, res: Response, next: NextFunction)
     logging.info(NAMESPACE, `request client by email called.`, req.params);
 
     const checks: Check[] = [isValidParam('email', req.params.email)];
-    const postfix = { where: Where.build('id').equal(req.params.id) };
+    const postfix = { where: Where.build('email').equal(req.params.email) };
     const onPass = async () => response(res, await queryClient(postfix));
 
     return guardResponse(res, checks, onPass);
