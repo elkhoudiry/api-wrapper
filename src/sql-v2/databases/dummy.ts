@@ -62,4 +62,8 @@ const createTenDummyInserts = (): SqlObject[] => {
     ];
 };
 
-export { createDummyTable, createTenDummyInserts };
+const createDummyInsertsTest = () => {
+    return createTenDummyInserts().map((obj, index) => (obj = { ...obj, id: index + 1 }));
+};
+
+export { createDummyTable, createTenDummyInserts, createDummyInsertsTest };
