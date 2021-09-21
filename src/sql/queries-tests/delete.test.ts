@@ -4,7 +4,7 @@ import { createDummyTable, createTenDummyInserts } from '../databases/dummy';
 import { postgre_mem } from '../databases/postgre-mem';
 import { Where } from '../options/where';
 import { delete_sql, delete_sql_query } from '../queries/delete';
-import { insert, InsertPostfix } from '../queries/insert';
+import { insert_sql, InsertPostfix } from '../queries/insert';
 
 // test delete query sentense with no options
 test('delete query integrity with no options', async () => {
@@ -20,7 +20,7 @@ test('delete whole table should success', async () => {
         const values = createTenDummyInserts();
         const testValues = values.map((obj, index) => (obj = { ...obj, id: index + 1 }));
         const insertPostfix: InsertPostfix<SqlObject> = { values };
-        await insert(postgre_mem, 'dummy_table', insertPostfix);
+        await insert_sql(postgre_mem, 'dummy_table', insertPostfix);
 
         const deleteResult = await delete_sql(postgre_mem, 'dummy_table', {});
 
@@ -34,7 +34,7 @@ test('delete selected values with "WHERE" should success', async () => {
         const values = createTenDummyInserts();
         const testValues = values.map((obj, index) => (obj = { ...obj, id: index + 1 }));
         const insertPostfix: InsertPostfix<SqlObject> = { values };
-        await insert(postgre_mem, 'dummy_table', insertPostfix);
+        await insert_sql(postgre_mem, 'dummy_table', insertPostfix);
 
         const deleteResult = await delete_sql(postgre_mem, 'dummy_table', { where: Where.build('id').greater(5) });
 
