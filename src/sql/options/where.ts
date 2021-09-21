@@ -1,4 +1,4 @@
-import { getValidSqlValue } from './database';
+import { getValidSqlValue } from '../databases/common';
 
 class Where {
     /**

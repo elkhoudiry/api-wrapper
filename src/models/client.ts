@@ -1,4 +1,4 @@
-import { SqlObject } from '../sql/database';
+import { SqlObject } from '../sql/databases/common';
 
 export class LocalClient implements SqlObject {
     readonly id: number;

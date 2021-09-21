@@ -1,6 +1,6 @@
 import { readFileSync } from 'fs';
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import { SqlObject } from '../sql/database';
+import { SqlObject } from '../sql/databases/common';
 
 const PRIVATE_KEY = readFileSync(`${__dirname}/../../rsa/key`, 'utf-8');
 const PUBLIC_KEY = readFileSync(`${__dirname}/../../rsa/key.pub`, 'utf-8');

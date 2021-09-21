@@ -1,32 +1,12 @@
-import { Pool, Client, QueryResult, PoolClient } from 'pg';
-import logging from '../utils/logging';
-
-const NAMESPACE = 'sql/database';
+const NAMESPACE = 'sql/databases/common';
 
 export interface SqlObject {
     [key: string]: string | number | boolean | null;
 }
 
-export interface Query {
-    response: Promise<QueryResult | Error>;
+export interface QueryExecuter<T> {
+    execute: (query: string) => Promise<T | Error>;
 }
-
-const pool = new Pool({
-    connectionString: process.env.DATABASE_URL
-});
-
-const query = async (query: (client: PoolClient) => Query): Promise<QueryResult | Error> => {
-    const client = await pool.connect();
-    let result: QueryResult | Error;
-    try {
-        result = await query(client).response;
-    } catch (error: any) {
-        if (error instanceof Error) logging.error(NAMESPACE, error.message);
-        result = error;
-    }
-    await client.release();
-    return result;
-};
 
 const getValidSqlValue = (value: any): string => {
     return typeof value === 'string' ? `\'${value}\'` : value.toString();
@@ -59,4 +39,4 @@ const getSqlColumnsValues = (obj: SqlObject, delimeter1: string, delimeter2: str
     return keys.reduce(check);
 };
 
-export { query, getValidSqlValue, getSqlColumns, getSqlValues, getSqlColumnsValues };
+export { getValidSqlValue, getSqlColumns, getSqlValues, getSqlColumnsValues };

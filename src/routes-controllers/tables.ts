@@ -29,7 +29,7 @@ const dropTableIfExist = (req: Request, res: Response, next: NextFunction) => {
     logging.info(NAMESPACE, `drop table if exist called.`, req.params);
 
     const checks: Check[] = [isValidParam('name', req.params.name)];
-    const onPass = async () => response(res, await dropDatabaseTableIfExist(req.params.name, {}));
+    const onPass = async () => response(res, await dropDatabaseTableIfExist(req.params.name, { cascade: false }));
 
     return guardResponse(res, checks, onPass);
 };
