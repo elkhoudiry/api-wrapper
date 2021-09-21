@@ -2,7 +2,7 @@ import { QueryResult } from 'pg-mem';
 import { createDummyInsertsTest, createDummyTable, createTenDummyInserts } from '../databases/dummy';
 import { postgre_mem } from '../databases/postgre-mem';
 import { Where } from '../options/where';
-import { insert } from '../queries/insert';
+import { insert_sql } from '../queries/insert';
 import { UpdatePostfix, update_sql, update_sql_query } from '../queries/update';
 
 // test update sentence integrity
@@ -19,7 +19,7 @@ test('update query should success', async () => {
         const values = createTenDummyInserts();
         // @ts-expect-error
         const test = createDummyInsertsTest().map((obj) => (obj = { ...obj, name: 'new name' }));
-        await insert(postgre_mem, 'dummy_table', { values });
+        await insert_sql(postgre_mem, 'dummy_table', { values });
 
         const result = await update_sql(postgre_mem, 'dummy_table', { name: 'new name' }, {});
 
@@ -37,7 +37,7 @@ test('update query only where should success', async () => {
             .splice(5);
 
         const postfix: UpdatePostfix = { where: Where.build('id').greater(5) };
-        await insert(postgre_mem, 'dummy_table', { values });
+        await insert_sql(postgre_mem, 'dummy_table', { values });
 
         const result = await update_sql(postgre_mem, 'dummy_table', { name: 'new name' }, postfix);
 
