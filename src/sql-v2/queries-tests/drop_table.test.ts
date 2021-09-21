@@ -1,5 +1,5 @@
 import { QueryResult } from 'pg-mem';
-import { createDummyTable } from '../databases/common';
+import { createDummyTable } from '../databases/dummy';
 import { postgre_mem } from '../databases/postgre-mem';
 import { DropTablePostfix, drop_table, drop_table_exist, drop_table_query } from '../queries/drop-table';
 
@@ -22,8 +22,8 @@ test('drop table integrity: no properties', () => {
 });
 
 // drop exisitng table should success
-test('drop exisiting table should success', () => {
-    createDummyTable(postgre_mem, async () => {
+test('drop exisiting table should success', async () => {
+    await createDummyTable(postgre_mem, async () => {
         const postfix: DropTablePostfix = { cascade: false };
         const result = (await drop_table(postgre_mem, 'dummy_table', postfix)) as QueryResult;
 
@@ -34,7 +34,7 @@ test('drop exisiting table should success', () => {
 // drop non existing table should fail
 test('drop non exisiting table should fail', async () => {
     const postfix: DropTablePostfix = { cascade: false };
-    const result = (await drop_table(postgre_mem, 'dummy_table', postfix)) as QueryResult;
+    const result = await drop_table(postgre_mem, 'dummy_table', postfix);
 
     expect(result instanceof Error).toBe(true);
 });

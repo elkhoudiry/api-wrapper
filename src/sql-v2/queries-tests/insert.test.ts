@@ -1,6 +1,6 @@
 import { QueryResult } from 'pg-mem';
 import { SqlObject } from '../../sql/database';
-import { createDummyTable } from '../databases/common';
+import { createDummyTable } from '../databases/dummy';
 import { postgre_mem } from '../databases/postgre-mem';
 import { insert, InsertPostfix } from '../queries/insert';
 

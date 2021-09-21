@@ -2,24 +2,19 @@ import { QueryExecuter } from './common';
 import { newDb, QueryResult } from 'pg-mem';
 
 class PostgreMem implements QueryExecuter<QueryResult> {
-    private readonly db = newDb();
+    private readonly pg = newDb().adapters.createPg();
+    private readonly pool = new this.pg.Pool();
 
     execute = async (query: string): Promise<Error | QueryResult> => {
+        const client = await this.pool.connect();
+
         try {
-            const result = this.db.public.query(query);
-            return result;
+            return await client.query(query);
         } catch (error: any) {
             return error;
+        } finally {
+            client.release();
         }
-    };
-
-    create_table = () => {
-        this.db.public.none(`create table test(id text);
-                insert into test values ('value');`);
-    };
-
-    drop_table = () => {
-        this.db.public.none(`drop table test;`);
     };
 }
 
