@@ -11,8 +11,8 @@ export function UNKNOWN_APP_ERROR(error: any): AppError {
 ////// AUTH 1000 ~ 1999 //////
 
 // JWT 1000 ~ 1099
-export const JWT_MODIFIED_ERR_CODE = 1000;
-export const JWT_MODIFIED_ERROR: AppError = new AppError(JWT_MODIFIED_ERR_CODE, messages.JWT_MODIFIED_ERR_MESSAGE);
+export const JWT_INVALID_ERR_CODE = 1000;
+export const JWT_INVALID_ERROR: AppError = new AppError(JWT_INVALID_ERR_CODE, messages.JWT_INVALID_ERR_MESSAGE);
 
 export const JWT_EXPIRED_ERR_CODE = 1001;
 export const JWT_EXPIRED_ERROR: AppError = new AppError(JWT_EXPIRED_ERR_CODE, messages.JWT_EXPIRED_ERR_MESSAGE);

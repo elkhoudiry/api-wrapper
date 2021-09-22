@@ -10,8 +10,8 @@ test('app error: unknown', () => {
 });
 
 test('app error: jwt modified', () => {
-    const test = new AppError(errors.JWT_MODIFIED_ERR_CODE, messages.JWT_MODIFIED_ERR_MESSAGE);
-    const result = errors.JWT_MODIFIED_ERROR;
+    const test = new AppError(errors.JWT_INVALID_ERR_CODE, messages.JWT_INVALID_ERR_MESSAGE);
+    const result = errors.JWT_INVALID_ERROR;
 
     expect(result).toStrictEqual(test);
 });

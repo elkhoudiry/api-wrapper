@@ -1,4 +1,4 @@
-import { JWT_EXPIRED_ERROR, JWT_MODIFIED_ERROR } from '../errors/Errors';
+import { JWT_EXPIRED_ERROR, JWT_INVALID_ERROR } from '../errors/Errors';
 import { sign, verify } from './Token';
 import { EXPIRED_TOKEN_TIME, TEST_ACCESS_TOKEN_TIME } from './Times';
 
@@ -18,7 +18,7 @@ test('verifying modified token, returns error', async () => {
     const token = signing.substring(0, 100) + checkA(signing[100]) + signing.substring(101);
     const result = await verify(token);
 
-    expect(result).toStrictEqual(JWT_MODIFIED_ERROR);
+    expect(result).toStrictEqual(JWT_INVALID_ERROR);
 });
 
 // test token expired tokens
