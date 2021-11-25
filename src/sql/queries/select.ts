@@ -37,7 +37,7 @@ const select_sql = async <T>(executer: QueryExecuter<T>, table: string, columns:
 
         logging.info(NAMESPACE, `query: ${query}`);
 
-        return executer.execute(query);
+        return await executer.execute(query);
     } catch (error: any) {
         return Error(error);
     }
