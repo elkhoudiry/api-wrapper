@@ -38,7 +38,7 @@ const queryClient = async (postfix: SelectPostfix): Promise<LocalClient[] | Erro
 
 /** insert new client to database */
 const insertClient = async (localClient: LocalClient): Promise<LocalClient | Error> => {
-    const result = await insert_sql(postgre, 'clients', { values: [localClient] });
+    const result = await insert_sql(postgre, 'clients', { values: [{ email: 5, code: 'asd', verified: '55' }] });
 
     return !(result instanceof Error) ? result.rows[0] : result;
 };
