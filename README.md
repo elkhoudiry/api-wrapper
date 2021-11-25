@@ -1,8 +1,8 @@
 # online-api
 
-api wrapper for faster development
+Api wrapper for faster development
 
-it has
+It has
 
 -   Get current time now
 -   Basic sql database wrapping
